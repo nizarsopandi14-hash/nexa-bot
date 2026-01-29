@@ -1,33 +1,23 @@
-body {
-    background-color: #0f0f0f;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexa | Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="bg-dark">
+    <div class="nav-bar">
+        <a href="/">← Kembali</a>
+    </div>
+    <div class="content">
+        <h2>Statistik Real-time</h2>
+        <div class="grid">
+            <div class="card"><h3>Server</h3><p>Online</p></div>
+            <div class="card"><h3>Ping</h3><p>24ms</p></div>
+        </div>
+        <img src="/banner.png" class="banner" alt="Bot Banner">
+    </div>
+</body>
+</html>
 
-.container {
-    padding: 50px;
-}
-
-.logo {
-    width: 120px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-}
-
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #5865F2;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    margin: 10px;
-}
-
-.btn:hover {
-    background-color: #4752c4;
-    
-}
