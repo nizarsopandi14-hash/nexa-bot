@@ -1,20 +1,28 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa Bot | Home</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <div class="hero">
-        <img src="/logo.png" alt="Nexa Logo" class="main-logo">
-        <h1>Nexa Bot Project</h1>
-        <p>Bot multifungsi untuk komunitas Discord Anda.</p>
-        <div class="button-group">
-            <a href="/dasboard" class="btn btn-primary">Buka Dashboard</a>
-            <a href="https://nexa-bot-production.up.railway.app/auth/discord" target="_blank" class="btn btn-secondary">Invite Bot</a>
-        </div>
-    </div>
-</body>
-</html>
+const { Client, GatewayIntentBits } = require('discord.js');
+const express = require('express');
+const path = require('path');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Konfigurasi Folder
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Routes Navigasi
+app.get('/', (req, res) => res.render('index'));
+app.get('/dasboard', (req, res) => res.render('dasboard'));
+app.get('/lobby_discord', (req, res) => res.render('lobby_discord'));
+
+// Bot Discord
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
+
+if (token) {
+    client.login(token).catch(() => console.log("Token belum valid di Railway Variables"));
+}
+
+app.listen(port, '0.0.0.0', () => {
+    console.log(`🚀 Server aktif di: nexa-bot-production.up.railway.app`);
+});
