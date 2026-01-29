@@ -1,48 +1,41 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// MENCARI FOLDER VIEWS SECARA OTOMATIS
-const possibleViewsPath = path.join(__dirname, 'views');
-if (fs.existsSync(possibleViewsPath)) {
-    app.set('views', possibleViewsPath);
-    console.log("✅ Folder views ditemukan di:", possibleViewsPath);
-} else {
-    console.error("❌ ERROR: Folder views tidak ditemukan!");
-}
-
+// Set view engine
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
 
-// ROUTE UTAMA
+// INI KUNCINYA: Mencoba mencari folder views di berbagai lokasi
+const paths = [
+    path.join(__dirname, 'views'),
+    path.join(__dirname, '..', 'views'),
+    path.join(process.cwd(), 'views')
+];
+
 app.get('/', (req, res) => {
-    res.render('index', (err, html) => {
+    // Kita coba render 'lobby_discord' saja dulu karena tadi 'index' bermasalah
+    res.render('lobby_discord', (err, html) => {
         if (err) {
-            console.error("❌ Gagal render index.ejs:", err.message);
-            // Jika index gagal, coba paksa buka lobby_discord
-            return res.render('lobby_discord', (err2, html2) => {
-                if (err2) return res.status(500).send("File index.ejs dan lobby_discord.ejs tidak ditemukan di folder views.");
-                res.send(html2);
-            });
+            // Jika lobby_discord juga gagal, kita tampilkan semua file yang terdeteksi
+            console.error("❌ Semua file view gagal dimuat:", err.message);
+            return res.status(500).send(`
+                <h1>File Tidak Ditemukan!</h1>
+                <p>Error: ${err.message}</p>
+                <p>Pastikan file .ejs ada di dalam folder bernama <b>views</b></p>
+            `);
         }
         res.send(html);
     });
 });
 
-app.get('/dasboard', (req, res) => res.render('dasboard'));
+app.listen(port, '0.0.0.0', () => {
+    console.log(`🚀 Server on port ${port}`);
+});
 
-// LOGIN BOT DISCORD
+// Login Bot (Simple)
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
-
-if (token) {
-    client.login(token).catch(e => console.error("❌ Token salah atau expired"));
-}
-
-app.listen(port, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${port}`);
-});
+if (token) client.login(token).catch(() => {});
