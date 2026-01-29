@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// FIX: Menggunakan __dirname agar tidak error di Railway
+// Pakai __dirname agar folder views terbaca
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -24,12 +24,14 @@ const client = new Client({
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`🚀 Website aktif di port ${port}`);
+    console.log(`🚀 Server aktif di port ${port}`);
 });
 
-// Auto-clean token dari tanda kutip
+// Bersihkan token dari tanda kutip otomatis
 const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
 
-client.login(token).catch(err => {
-    console.error("❌ LOGIN GAGAL: Periksa TOKEN di tab Variables!");
-});
+if (token) {
+    client.login(token).catch(err => console.error("❌ Gagal Login!"));
+} else {
+    console.error("❌ TOKEN kosong di Variables!");
+}
