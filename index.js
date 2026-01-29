@@ -1,46 +1,20 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const express = require('express');
 const path = require('path');
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Setup EJS dan Static Files
-app.set('view engine', 'ejs');
+// Pastikan path ke folder views diatur dengan benar
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs');
 
-// Route Navigasi Website
 app.get('/', (req, res) => {
+    // Render file index.ejs yang ada di folder views
     res.render('index', (err, html) => {
         if (err) {
-            console.error("❌ DETAIL ERROR RENDERING:", err.message);
-            return res.status(500).send(`Error: ${err.message}`);
+            // Jika masih error, tampilkan pesan spesifik di layar
+            return res.status(500).send(`
+                <h1>Error View Tidak Ketemu!</h1>
+                <p>Express mencari file <b>index.ejs</b> di folder: <code>${path.join(__dirname, 'views')}</code></p>
+                <p>Detail: ${err.message}</p>
+            `);
         }
         res.send(html);
     });
 });
-// Setup Discord Bot
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildVoiceStates
-    ]
-});
-
-client.on('ready', () => {
-    console.log(`✅ DISCORD: ${client.user.tag} Online!`);
-});
-
-// Jalankan Server
-app.listen(port, '0.0.0.0', () => {
-    console.log(`🚀 WEBSITE: Berjalan di port ${port}`);
-});
-
-// Login Aman (Auto-clean tanda kutip)
-const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
-if (token) {
-    client.login(token).catch(() => console.error("❌ TOKEN SALAH!"));
-}
