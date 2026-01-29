@@ -1,23 +1,12 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa | Dashboard</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body class="bg-dark">
-    <div class="nav-bar">
-        <a href="/">← Kembali</a>
-    </div>
-    <div class="content">
-        <h2>Statistik Real-time</h2>
-        <div class="grid">
-            <div class="card"><h3>Server</h3><p>Online</p></div>
-            <div class="card"><h3>Ping</h3><p>24ms</p></div>
-        </div>
-        <img src="/banner.png" class="banner" alt="Bot Banner">
-    </div>
-</body>
-</html>
+body { background: #121212; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; text-align: center; }
+.hero { padding: 100px 20px; }
+.main-logo { width: 120px; border-radius: 50%; border: 3px solid #5865F2; margin-bottom: 20px; }
+.button-group { margin-top: 30px; }
+.btn { padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 10px; display: inline-block; }
+.btn-primary { background: #5865F2; color: white; }
+.btn-secondary { background: #333; color: white; border: 1px solid #555; }
+.banner { width: 90%; max-width: 800px; border-radius: 15px; margin-top: 20px; }
+.grid { display: flex; justify-content: center; gap: 20px; padding: 20px; }
+.card { background: #1e1e1e; padding: 20px; border-radius: 10px; min-width: 150px; }
+
 
