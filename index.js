@@ -31,6 +31,13 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/auth/discord', (req, res) => {
+    // GANTI link di bawah ini dengan link OAuth2 dari Discord Developer Portal kamu
+    const discordInviteUrl = "https://nexa-bot-production.up.railway.app/auth/discord";
+    
+    res.redirect(discordInviteUrl);
+});
+
 app.listen(port, '0.0.0.0', () => {
     console.log(`🚀 Server on port ${port}`);
 });
@@ -38,4 +45,5 @@ app.listen(port, '0.0.0.0', () => {
 // Login Bot (Simple)
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
+
 if (token) client.login(token).catch(() => {});
