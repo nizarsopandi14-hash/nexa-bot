@@ -1,18 +1,26 @@
 {
+  "name": "nexa-bot",
+  "version": "1.0.0",
+  "description": "Nexa Project Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "@discordjs/voice": "^0.19.0",
     "@snazzah/davey": "^0.1.9",
     "axios": "^1.13.4",
-    "discord.js": "^14.25.1",
-    "dotenv": "^17.2.3",
-    "ejs": "^4.0.1",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "ffmpeg-static": "^5.3.0",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "ffmpeg-static": "^5.2.0",
     "kazagumo": "^3.4.0",
-    "libsodium-wrappers": "^0.8.2",
+    "libsodium-wrappers": "^0.7.13",
     "opusscript": "^0.0.8",
     "play-dl": "^1.9.7",
-    "shoukaku": "^4.2.0"
+    "shoukaku": "^4.0.0",
+    "path": "^0.12.7"
   }
 }
