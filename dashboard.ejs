@@ -1,120 +1,58 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexa | Quantum Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --p: #00d2ff; --s: #0a0a0b; --card: #121214; --glass: rgba(255,255,255,0.03); }
-        body { margin: 0; background: var(--s); color: #e1e1e6; font-family: 'Inter', sans-serif; display: flex; height: 100vh; }
-        
-        /* SIDEBAR PRO */
-        .sidebar { width: 280px; background: #000; border-right: 1px solid #202024; display: flex; flex-direction: column; padding: 20px; }
-        .nav-item { padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; color: #8d8d99; margin-bottom: 5px; }
-        .nav-item:hover, .nav-item.active { background: var(--glass); color: var(--p); }
-        .locked { opacity: 0.4; cursor: not-allowed; }
-
-        .main { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, #101015, #0a0a0b); }
-        .card { background: var(--card); border: 1px solid #29292e; border-radius: 20px; padding: 30px; margin-bottom: 25px; transition: 0.3s; }
-        .card:hover { border-color: var(--p); }
-
-        /* SERVER SELECTOR */
-        .grid-servers { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .s-card { background: #1a1a1e; padding: 15px; border-radius: 15px; cursor: pointer; text-align: center; border: 2px solid transparent; }
-        .s-card.selected { border-color: var(--p); background: rgba(0, 210, 255, 0.05); }
-
-        select, input, textarea { width: 100%; background: #000; border: 1px solid #29292e; color: white; padding: 15px; border-radius: 10px; margin-top: 10px; font-size: 14px; }
-        .btn-upgrade { background: linear-gradient(90deg, #00d2ff, #3a7bd5); border: none; padding: 18px; border-radius: 12px; color: #000; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexa Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-
+<body class="dashboard-body">
     <div class="sidebar">
-        <h1 style="color:var(--p); font-size: 24px; margin-bottom: 40px;">NEXA <small style="font-size: 10px; color: #555;">v2.0</small></h1>
-        <div class="nav-item active" onclick="tab('home')"><i class="fas fa-grid-2"></i> Dashboard</div>
-        <div id="btn-verify" class="nav-item locked"><i class="fas fa-shield-check"></i> Verification</div>
-        <div id="btn-music" class="nav-item locked"><i class="fas fa-ranking-stars"></i> Leaderboard</div>
-        <div class="nav-item" onclick="tab('settings')"><i class="fas fa-sliders"></i> Settings</div>
+        <div class="profile">
+            <img src="/logo.png" alt="Bot Logo">
+            <h3>Nexa Project</h3>
+        </div>
+        <nav>
+            <a href="/" class="nav-item"><i class="fas fa-home"></i> Home</a>
+            <a href="/dasboard" class="nav-item active"><i class="fas fa-chart-line"></i> Statistics</a>
+            <a href="/lobby_discord" class="nav-item"><i class="fab fa-discord"></i> Discord</a>
+            <a href="/lobby_email" class="nav-item"><i class="fas fa-envelope"></i> Support</a>
+        </nav>
     </div>
 
-    <div class="main">
-        <div id="home" class="tab-content">
-            <h2 style="margin-bottom: 5px;">Selamat Datang, <%= user.username %>!</h2>
-            <p style="color: #8d8d99; margin-bottom: 30px;">Silakan pilih server terlebih dahulu untuk membuka fitur lainnya.</p>
-            
-            <div class="grid-servers">
-                <% servers.forEach(s => { %>
-                    <div class="s-card" onclick="selectServer('<%= s.id %>', this)">
-                        <img src="<%= s.iconURL() || 'https://cdn.discordapp.com/embed/avatars/0.png' %>" style="width: 60px; border-radius: 50%; margin-bottom: 10px;">
-                        <div style="font-weight: bold;"><%= s.name %></div>
-                    </div>
-                <% }) %>
+    <main class="content">
+        <header>
+            <h2>Bot Statistics</h2>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-server"></i>
+                <div>
+                    <h4>Servers</h4>
+                    <p>Connected</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h4>Users</h4>
+                    <p>Monitoring</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-music"></i>
+                <div>
+                    <h4>Music</h4>
+                    <p>Active Player</p>
+                </div>
             </div>
         </div>
 
-        <div id="verify" class="tab-content hidden">
-            <div class="card">
-                <h3>Verification Setup for <span id="active-server-name" style="color:var(--p);">...</span></h3>
-                <label>Pilih Channel Verification</label>
-                <select id="channel-list"><option>Memuat channel...</option></select>
-
-                <label style="margin-top: 20px; display: block;">Pilih Role Hadiah</label>
-                <select id="role-list"><option>Memuat role...</option></select>
-
-                <label style="margin-top: 20px; display: block;">Verification Title</label>
-                <input type="text" placeholder="Contoh: Nexa Member Gate">
-
-                <label style="margin-top: 20px; display: block;">Custom Message</label>
-                <textarea rows="3" placeholder="Halo {user.player}, selamat datang di {server.icon}!"></textarea>
-
-                <button class="btn-upgrade" style="margin-top: 30px;">KIRIM KE DISCORD</button>
-            </div>
+        <div class="banner-section">
+            <img src="/banner.png" alt="Banner" class="dash-banner">
         </div>
-
-        <div id="music" class="tab-content hidden">
-            <h3>Top 50 Music Listeners</h3>
-            <div class="card">
-                <% if(leaderboard.length === 0) { %>
-                    <div style="text-align: center; color: #555;">
-                        <i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <p>Belum ada data player. Ayo putar musik sekarang!</p>
-                    </div>
-                <% } %>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let selectedId = null;
-
-        function selectServer(id, el) {
-            selectedId = id;
-            document.querySelectorAll('.s-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-
-            // Unlock Tabs
-            document.getElementById('btn-verify').classList.remove('locked');
-            document.getElementById('btn-verify').onclick = () => tab('verify');
-            document.getElementById('btn-music').classList.remove('locked');
-            document.getElementById('btn-music').onclick = () => tab('music');
-
-            // Load Channels & Roles
-            fetch(`/api/server-data/${id}`)
-                .then(res => res.json())
-                .then(data => {
-                    const cList = document.getElementById('channel-list');
-                    const rList = document.getElementById('role-list');
-                    cList.innerHTML = data.channels.map(c => `<option value="${c.id}">#${c.name}</option>`).join('');
-                    rList.innerHTML = data.roles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-                });
-        }
-
-        function tab(name) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById(name).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-    </script>
+    </main>
 </body>
 </html>
