@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// FIX: Menggunakan __dirname agar tidak error di Railway
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -23,12 +24,12 @@ const client = new Client({
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`🚀 Website online di port ${port}`);
+    console.log(`🚀 Website aktif di port ${port}`);
 });
 
-// Fungsi pembersih tanda kutip otomatis
-const token = process.env.TOKEN ? process.env.TOKEN.replace(/['"]+/g, '') : '';
+// Auto-clean token dari tanda kutip
+const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
 
 client.login(token).catch(err => {
-    console.error("❌ Gagal Login: Token tidak valid atau ada tanda kutip.");
+    console.error("❌ LOGIN GAGAL: Periksa TOKEN di tab Variables!");
 });
