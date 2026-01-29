@@ -11,10 +11,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route Navigasi Website
-app.get('/', (req, res) => res.render('index'));
-app.get('/lobby_discord', (req, res) => res.render('lobby_discord'));
-app.get('/dasboard', (req, res) => res.render('dasboard'));
-
+app.get('/', (req, res) => {
+    res.render('index', (err, html) => {
+        if (err) {
+            console.error("❌ DETAIL ERROR RENDERING:", err.message);
+            return res.status(500).send(`Error: ${err.message}`);
+        }
+        res.send(html);
+    });
+});
 // Setup Discord Bot
 const client = new Client({
     intents: [
