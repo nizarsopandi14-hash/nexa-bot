@@ -5,38 +5,34 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// FIX: Gunakan path.resolve agar lokasi folder VIEWS absolut
-const viewsPath = path.resolve(__dirname, 'views');
+// Paksa Express mencari folder views secara absolut
 app.set('view engine', 'ejs');
-app.set('views', viewsPath);
-
-// Sajikan file statis (CSS/Gambar)
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    // Render index.ejs
+    // Coba render index, jika gagal pindah ke lobby_discord
     res.render('index', (err, html) => {
         if (err) {
-            console.error("❌ Gagal render index:", err.message);
-            // Jika index.ejs hilang, coba lempar ke lobby_discord sebagai cadangan
-            return res.render('lobby_discord'); 
+            console.error("DEBUG: index.ejs tidak ketemu, mencoba lobby_discord...");
+            return res.render('lobby_discord', (err2, html2) => {
+                if (err2) return res.status(500).send("Semua file views hilang!");
+                res.send(html2);
+            });
         }
         res.send(html);
     });
 });
 
-// Tambahkan route lain agar tidak 404
 app.get('/dasboard', (req, res) => res.render('dasboard'));
-app.get('/lobby_discord', (req, res) => res.render('lobby_discord'));
 
-const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]
-});
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-// Login Bot & Jalankan Server
+// Bersihkan TOKEN dari tanda kutip otomatis
 const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
+
 if (token) {
-    client.login(token).catch(err => console.error("❌ Login Gagal"));
+    client.login(token).catch(e => console.error("❌ Login Gagal"));
 }
 
 app.listen(port, '0.0.0.0', () => {
