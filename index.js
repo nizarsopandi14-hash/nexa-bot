@@ -100,5 +100,7 @@ client.once('ready', () => {
     console.log(`✅ Nexa Ready: http://localhost:${port}`);
 });
 
-client.login(process.env.DISCORD_TOKEN);
-app.listen(port);
+// Ganti baris login kamu menjadi seperti ini:
+client.login(process.env.TOKEN).catch(err => {
+    console.error("Gagal Login! Pastikan TOKEN di Variables Railway sudah benar.");
+});
