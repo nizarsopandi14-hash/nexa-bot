@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "@discordjs/voice": "^0.19.0",
+    "@snazzah/davey": "^0.1.9",
+    "axios": "^1.13.4",
+    "discord.js": "^14.25.1",
+    "dotenv": "^17.2.3",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "ffmpeg-static": "^5.3.0",
+    "kazagumo": "^3.4.0",
+    "libsodium-wrappers": "^0.8.2",
+    "opusscript": "^0.0.8",
+    "play-dl": "^1.9.7",
+    "shoukaku": "^4.2.0"
+  }
+}
