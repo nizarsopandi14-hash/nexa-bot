@@ -6,13 +6,18 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "express": "^4.18.2",
-    "ejs": "^3.1.9",
     "@discordjs/voice": "^0.16.1",
-    "axios": "^1.6.2",
-    "shoukaku": "^4.0.0",
+    "@google/generative-ai": "^0.24.1",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.6.1",
+    "ejs": "^3.1.10",
+    "express": "^4.22.1",
+    "express-session": "^1.19.0",
     "kazagumo": "^3.0.5",
-    "dotenv": "^16.0.0"
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "shoukaku": "^4.0.0"
   }
 }

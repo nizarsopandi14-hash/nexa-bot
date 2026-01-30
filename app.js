@@ -64,14 +64,13 @@ function checkDiscord(req, res, next) {
 // --- ROUTES ---
 
 // 1. Halaman Login Email
-// Pastikan path ini SAMA PERSIS dengan yang didaftarkan di Discord Portal
-app.get('/auth/discord/callback', 
-    passport.authenticate('discord', { failureRedirect: '/login' }), 
-    (req, res) => {
-        // Jika berhasil login discord, lempar ke dashboard
-        res.redirect('/dashboard');
-    }
-);
+app.get('/login', (req, res) => res.send('<h2>Login Email</h2><form action="/login" method="POST"><input name="email" placeholder="Email" required><button>Next</button></form>'));
+
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/connect-discord',
+    failureRedirect: '/login'
+}));
+
 // 2. Halaman Jembatan ke Discord
 app.get('/connect-discord', checkAuth, (req, res) => {
     res.send('<h2>Email Berhasil!</h2><p>Sekarang hubungkan Discord Anda:</p><a href="/auth/discord">Klik Login Discord</a>');
@@ -98,6 +97,5 @@ app.get('/dashboard', checkAuth, checkDiscord, (req, res) => {
 app.get('/logout', (req, res) => {
     req.logout(() => res.redirect('/login'));
 });
-
 
 app.listen(process.env.PORT || 3000, () => console.log("Nexa Bot Web Running..."));
