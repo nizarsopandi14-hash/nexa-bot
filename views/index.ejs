@@ -1,74 +1,36 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa | The Next Gen Music Bot</title>
+    <title>Nexa | Login</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
-        body { background: #0a0a0f; color: white; overflow: hidden; }
-        
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0f 100%);
+        body { background: #0a0a0f; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { 
+            background: rgba(255,255,255,0.05); 
+            width: 400px; padding: 40px; border-radius: 20px; text-align: center;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .hero h1 {
-            font-size: 5rem;
-            letter-spacing: -2px;
-            background: linear-gradient(to right, #00d2ff, #3a7bd5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .hero p { color: #888; font-size: 1.2rem; margin-bottom: 40px; }
-
-        .btn-login {
-            padding: 15px 40px;
-            background: #5865F2;
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(88, 101, 242, 0.2);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(88, 101, 242, 0.4);
-            background: #4752c4;
-        }
-
-        /* Dekorasi Lingkaran Cahaya */
-        .glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: #3a7bd5;
-            filter: blur(150px);
-            opacity: 0.2;
-            z-index: -1;
-        }
+        .banner { width: 100%; height: 120px; background: url('/banner.jpg') center/cover; border-radius: 10px; margin-bottom: 20px; }
+        .logo { width: 80px; margin-top: -50px; border: 5px solid #0a0a0f; border-radius: 50%; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        .btn { display: block; width: 100%; padding: 12px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px; cursor: pointer; border: none; }
+        .btn-discord { background: #5865F2; color: white; }
+        .btn-email { background: #333; color: white; }
     </style>
 </head>
 <body>
-    <div class="glow" style="top: 10%; left: 10%;"></div>
-    <div class="glow" style="bottom: 10%; right: 10%;"></div>
+    <div class="login-card">
+        <div class="banner"></div>
+        <img src="/logo.png" class="logo" alt="Nexa Logo">
+        <h2>Welcome to Nexa</h2>
+        
+        <form action="/login-email" method="POST">
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" class="btn btn-email">Login with Email</button>
+        </form>
 
-    <div class="hero">
-        <h1>NEXA</h1>
-        <p>Advanced Music Integration for Discord</p>
-        <% if (!user) { %>
-            <a href="/auth/discord" class="btn-login">Connect with Discord</a>
-        <% } else { %>
-            <a href="/dashboard" class="btn-login">Go to Dashboard</a>
-        <% } %>
+        <p>OR</p>
+        <a href="/auth/discord" class="btn btn-discord">Login with Discord</a>
     </div>
 </body>
 </html>
