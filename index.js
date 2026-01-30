@@ -31,12 +31,17 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/auth/discord', (req, res) => {
-    // GANTI link di bawah ini dengan link OAuth2 dari Discord Developer Portal kamu
-    const discordInviteUrl = "https://nexa-bot-production.up.railway.app/auth/discord";
-    
-    res.redirect(discordInviteUrl);
-});
+// 1. Route untuk mulai login Discord
+app.get('/auth/discord', passport.authenticate('discord'));
+
+// 2. Route Callback (INI YANG KURANG DI KODE ANDA)
+// Discord akan mengirim data ke sini setelah user klik "Authorize"
+app.get('/auth/discord/callback', 
+    passport.authenticate('discord', { failureRedirect: '/login' }), 
+    (req, res) => {
+        res.redirect('/dashboard'); // Jika sukses, masuk ke dashboard
+    }
+);
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`🚀 Server on port ${port}`);
@@ -47,3 +52,4 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const token = (process.env.TOKEN || '').replace(/['"]+/g, '');
 
 if (token) client.login(token).catch(() => {});
+
