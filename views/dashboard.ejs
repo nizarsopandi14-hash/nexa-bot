@@ -1,26 +1,336 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Nexa Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexa Dashboard | Music Control</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <style>
-        body { background: #0a0a0f; color: white; font-family: sans-serif; padding: 40px; }
-        .header { background: url('/banner.jpg') center/cover; height: 200px; border-radius: 20px; position: relative; }
-        .user-info { position: absolute; bottom: -30px; left: 40px; display: flex; align-items: center; }
-        .user-info img { width: 100px; height: 100px; border-radius: 50%; border: 5px solid #0a0a0f; }
-        .content { margin-top: 60px; background: #16213e; padding: 20px; border-radius: 15px; }
+        :root {
+            --bg-dark: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary-blue: #00d2ff;
+            --secondary-blue: #3a7bd5;
+            --discord-blue: #5865F2;
+            --text-light: #e0e0e0;
+            --text-dim: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 15px 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+        }
+        .navbar .logo { font-weight: 900; font-size: 1.8rem; background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links a, .nav-links button {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 15px;
+            margin-left: 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .nav-links a:hover, .nav-links button:hover, .nav-links a.active {
+            color: var(--text-light);
+            background: rgba(var(--primary-blue), 0.1);
+        }
+        .user-profile { display: flex; align-items: center; }
+        .user-profile .avatar { width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; border: 2px solid var(--primary-blue); }
+        .user-profile span { margin-right: 15px; }
+        .btn-signout { background: #ff4757; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; }
+        .btn-signout:hover { background: #e03c4a; }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .profile-section { text-align: center; }
+        .profile-section .avatar-large { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary-blue); margin-bottom: 20px; }
+        .profile-section h2 { font-size: 2.2rem; margin-bottom: 10px; }
+        .profile-section p { color: var(--text-dim); margin-bottom: 20px; }
+        .profile-section .status-badge { background: rgba(var(--primary-blue), 0.15); color: var(--primary-blue); padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+
+        .music-controller, .settings-panel {
+            min-height: 400px;
+        }
+        .music-controller h3, .settings-panel h3 { font-size: 1.8rem; margin-bottom: 20px; color: var(--text-light); }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-light); }
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        .form-group input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        .form-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        .music-controls { display: flex; gap: 15px; margin-top: 20px; }
+        .music-controls button {
+            flex-grow: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--discord-blue);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .music-controls button:hover { background: #4752c4; }
+        .music-controls button.stop { background: #e03c4a; }
+        .music-controls button.stop:hover { background: #c53542; }
+
+        .now-playing {
+            background: rgba(var(--primary-blue), 0.1);
+            border: 1px solid rgba(var(--primary-blue), 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .now-playing p { font-size: 1.1rem; color: var(--text-light); margin-bottom: 5px; }
+        .now-playing small { color: var(--text-dim); }
+
+        .command-list-item {
+            background: rgba(0,0,0,0.2);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .command-list-item code { background: rgba(var(--primary-blue), 0.1); color: var(--primary-blue); padding: 4px 8px; border-radius: 5px; font-size: 0.9rem; }
+        
+        #responseMessage { margin-top: 20px; padding: 10px; border-radius: 8px; }
+        .success { background: rgba(0,255,0,0.1); color: #00ff00; }
+        .error { background: rgba(255,0,0,0.1); color: #ff0000; }
+        .info { background: rgba(0,0,255,0.1); color: #00aaff; }
+
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="user-info">
-            <img src="<%= user.avatar ? 'https://cdn.discordapp.com/avatars/'+user.id+'/'+user.avatar+'.png' : '/logo.png' %>">
-            <h1 style="margin-left: 20px;"><%= user.username || user.email %></h1>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">NEXA</div>
+            <div class="nav-links">
+                <button onclick="showTab('dashboard')" class="active">Dashboard</button>
+                <button onclick="showTab('commands')">Commands</button>
+                <button onclick="showTab('settings')">Settings</button>
+            </div>
+            <div class="user-profile">
+                <img src="<%= user.avatar ? 'https://cdn.discordapp.com/avatars/'+user.id+'/'+user.avatar+'.png' : '/logo.png' %>" class="avatar" alt="User Avatar">
+                <span><%= user.username %></span>
+                <a href="/logout" class="btn-signout">Sign Out</a>
+            </div>
+        </nav>
+
+        <div class="main-grid">
+            <div class="card profile-section">
+                <img src="<%= user.avatar ? 'https://cdn.discordapp.com/avatars/'+user.id+'/'+user.avatar+'.png' : '/logo.png' %>" class="avatar-large" alt="User Avatar">
+                <h2>Welcome, <%= user.username %>!</h2>
+                <p>ID: <%= user.discordId || user.id %></p>
+                <div class="status-badge">Nexa Pro User</div>
+            </div>
+
+            <div class="content-area">
+                <div id="dashboard-tab" class="card music-controller tab-content active-tab">
+                    <h3>Music Controller</h3>
+                    <div class="form-group">
+                        <label for="discordGuild">Select Guild:</label>
+                        <select id="discordGuild" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="voiceChannel">Select Voice Channel:</label>
+                        <select id="voiceChannel" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="songQuery">YouTube/Spotify link or search:</label>
+                        <input type="text" id="songQuery" placeholder="Enter song link or name">
+                        <button class="btn-discord" onclick="playSong()">Play Song</button>
+                    </div>
+                    
+                    <div class="now-playing" id="nowPlayingDisplay" style="display:none;">
+                        <p>Now Playing: <span id="currentSongTitle"></span></p>
+                        <small>Volume: <span id="currentVolumeDisplay"></span>%</small>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="volumeSlider">Volume: <span id="volumeValue">50</span>%</label>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+
+                    <div class="music-controls">
+                        <button onclick="skipSong()">Skip</button>
+                        <button class="stop" onclick="stopSong()">Stop</button>
+                    </div>
+                    <div id="responseMessage" class="info" style="display:none;"></div>
+                </div>
+
+                <div id="commands-tab" class="card settings-panel tab-content">
+                    <h3>Bot Commands</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 20px;">
+                        Gunakan perintah ini di server Discord Anda (awali dengan `!`).
+                    </p>
+                    <div class="command-list-item">
+                        <span>Putar Lagu</span>
+                        <code>!play [link/judul]</code>
+                    </div>
+                    <div class="command-list-item">
+                        <span>Lewati Lagu</span>
+                        <code>!skip</code>
+                    </div>
+                    <div class="command-list-item">
+                        <span>Berhentikan Musik</span>
+                        <code>!stop</code>
+                    </div>
+                    <div class="command-list-item">
+                        <span>Cek Antrian</span>
+                        <code>!queue</code>
+                    </div>
+                </div>
+
+                <div id="settings-tab" class="card settings-panel tab-content">
+                    <h3>Account Settings</h3>
+                    <p style="color: var(--text-dim);">Coming Soon: Personalize your Nexa experience.</p>
+                    <div class="form-group">
+                        <label for="usernameSetting">Username:</label>
+                        <input type="text" id="usernameSetting" value="<%= user.username || user.email %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailSetting">Email:</label>
+                        <input type="text" id="emailSetting" value="<%= user.email || 'N/A' %>" readonly>
+                    </div>
+                    </div>
+            </div>
         </div>
     </div>
-    <div class="content">
-        <h3>Nexa Control Panel</h3>
-        <p>Status: Active</p>
-        <a href="/logout" style="color: #ff4757;">Sign Out</a>
-    </div>
-</body>
-</html>
+
+    <script>
+        const socket = io();
+        let selectedGuildId = null;
+        let selectedVoiceChannelId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchGuilds(); // Ambil daftar server Discord
+            
+            // Inisialisasi slider volume
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValueDisplay = document.getElementById('volumeValue');
+            volumeSlider.oninput = function() {
+                volumeValueDisplay.textContent = this.value;
+                if (selectedGuildId) {
+                    socket.emit('setVolumeWeb', { guildId: selectedGuildId, volume: this.value / 100 });
+                }
+            };
+        });
+
+        async function fetchGuilds() {
+            try {
+                const response = await fetch('/api/guilds'); // Kita akan membuat route ini
+                const guilds = await response.json();
+                const guildSelect = document.getElementById('discordGuild');
+                guildSelect.innerHTML = '<option value="">Pilih Server</option>';
+                guilds.forEach(guild => {
+                    const option = document.createElement('option');
+                    option.value = guild.id;
+                    option.textContent = guild.name;
+                    guildSelect.appendChild(option);
+                });
+
+                guildSelect.onchange = (e) => {
+                    selectedGuildId = e.target.value;
+                    if (selectedGuildId) {
+                        socket.emit('joinGuild', selectedGuildId);
+                    }
+                };
+            } catch (error) {
+                console.error('Failed to fetch guilds:', error);
+                showMessage('error', 'Gagal memuat daftar server.');
+            }
+        }
+
+        socket.on('voiceChannels', (channels) => {
+            const voiceChannelSelect = document.getElementById('voiceChannel');
+            voiceChannelSelect.innerHTML = '<option value="">Pilih Voice Channel</option>';
+            channels.forEach(channel => {
+                const option = document.createElement('option');
+                option.value = channel.id;
+                option.textContent = channel.name;
+                voiceChannelSelect.appendChild(option);
+            });
+            voiceChannelSelect.onchange = (e) => {
+                selectedVoiceChannelId = e.target.value;
+            };
+        });
+
+        socket.on('nowPlaying', (song) => {
+            const nowPlayingDisplay = document.getElementById('nowPlayingDisplay');
+            const currentSongTitle = document.getElementById('currentSongTitle');
+            const currentVolumeDisplay = document.getElementById('currentVolumeDisplay');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValue = document.getElementById('volumeValue');
+
+            if (song) {
+                nowPlayingDisplay.style.display = 'block';
+                currentSongTitle.textContent = song.title;
+                currentVolumeDisplay.textContent = Math.round(song.volume * 100);
+                volumeSlider.value = Math.round(song.volume * 100);
+                volumeValue.textContent = Math.round(song.volume * 100);
+            } else {
+                nowPlayingDisplay.style.display = 'none';
+                currentSongTitle.textContent = '';
+                currentVolumeDisplay.textContent = '0';
+                volumeSlider.value = 50;
+                volumeValue.textContent = 50;
+            }
+        });
+
+        socket.on('musicStatus', (message) => showMessage('info',
