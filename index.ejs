@@ -3,18 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa Bot | Home</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Nexa | The Next Gen Music Bot</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background: #0a0a0f; color: white; overflow: hidden; }
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0f 100%);
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .hero p { color: #888; font-size: 1.2rem; margin-bottom: 40px; }
+
+        .btn-login {
+            padding: 15px 40px;
+            background: #5865F2;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(88, 101, 242, 0.2);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(88, 101, 242, 0.4);
+            background: #4752c4;
+        }
+
+        /* Dekorasi Lingkaran Cahaya */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: #3a7bd5;
+            filter: blur(150px);
+            opacity: 0.2;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body>
+    <div class="glow" style="top: 10%; left: 10%;"></div>
+    <div class="glow" style="bottom: 10%; right: 10%;"></div>
+
     <div class="hero">
-        <img src="/logo.png" alt="Nexa Logo" class="main-logo">
-        <h1>Nexa Bot Project</h1>
-        <p>Bot multifungsi untuk komunitas Discord Anda.</p>
-        <div class="button-group">
-            <a href="/dasboard" class="btn btn-primary">Buka Dashboard</a>
-            <a href="https://nexa-bot-production.up.railway.app/auth/discord" target="_blank" class="btn btn-secondary">Invite Bot</a>
-        </div>
+        <h1>NEXA</h1>
+        <p>Advanced Music Integration for Discord</p>
+        <% if (!user) { %>
+            <a href="/auth/discord" class="btn-login">Connect with Discord</a>
+        <% } else { %>
+            <a href="/dashboard" class="btn-login">Go to Dashboard</a>
+        <% } %>
     </div>
 </body>
 </html>
