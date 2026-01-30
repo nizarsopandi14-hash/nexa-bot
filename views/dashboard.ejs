@@ -333,4 +333,55 @@
             }
         });
 
-        socket.on('musicStatus', (message) => showMessage('info',
+        socket.on('musicStatus', (message) => showMessage('info', message));
+        socket.on('musicError', (message) => showMessage('error', message));
+        socket.on('queueUpdate', (queue) => {
+            console.log('Antrian Diperbarui:', queue);
+            showMessage('info', `Antrian: ${queue.join(', ')}`);
+        });
+
+        function playSong() {
+            if (!selectedGuildId || !selectedVoiceChannelId) {
+                return showMessage('error', 'Pilih Server dan Voice Channel!');
+            }
+            const query = document.getElementById('songQuery').value;
+            if (!query) return showMessage('error', 'Masukkan link atau judul lagu!');
+            socket.emit('playSongWeb', { guildId: selectedGuildId, voiceChannelId: selectedVoiceChannelId, query });
+            showMessage('info', 'Meminta bot untuk memutar lagu...');
+        }
+
+        function stopSong() {
+            if (!selectedGuildId) return showMessage('error', 'Pilih Server dahulu.');
+            socket.emit('stopSongWeb', { guildId: selectedGuildId });
+            showMessage('info', 'Mengirim perintah stop...');
+        }
+
+        function skipSong() {
+            if (!selectedGuildId) return showMessage('error', 'Pilih Server dahulu.');
+            socket.emit('skipSongWeb', { guildId: selectedGuildId });
+            showMessage('info', 'Mengirim perintah skip...');
+        }
+        
+        // --- Tab Switching Logic ---
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active-tab');
+                tab.style.display = 'none';
+            });
+            document.getElementById(`${tabId}-tab`).classList.add('active-tab');
+            document.getElementById(`${tabId}-tab`).style.display = 'block';
+
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.nav-links button[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Default to dashboard tab
+        showTab('dashboard'); 
+
+        function showMessage(type, message) {
+            const msgBox = document.getElementById('responseMessage');
+            msgBox.textContent = message;
+            msgBox.className = `info ${type}`; // Reset class dan tambahkan tipe
+            msgBox.style.display =
