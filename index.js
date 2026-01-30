@@ -81,7 +81,16 @@ client.on('messageCreate', async (msg) => {
     }
 });
 
-// --- START ---
-client.login(process.env.DISCORD_TOKEN).catch(() => console.log("Token invalid"));
-app.listen(PORT, () => console.log(`Server aktif di port ${PORT}`));
+// Ganti bagian paling bawah index.js
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Website NEXA siap di port ${PORT}`);
+}).on('error', (err) => {
+    console.error('❌ Gagal menjalankan server web:', err);
+});
+
+client.login(process.env.DISCORD_TOKEN).then(() => {
+    console.log('✅ Bot Nexa berhasil login ke Discord!');
+}).catch(err => {
+    console.error('❌ Bot gagal login (Cek Token/Intents):', err.message);
+});
 
