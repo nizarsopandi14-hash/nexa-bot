@@ -109,5 +109,16 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-client.login(process.env.DISCORD_TOKEN);
-app.listen(PORT, () => console.log(`Server Nexa aktif di port ${PORT}`));
+// Ganti bagian client.login paling bawah dengan ini:
+if (process.env.DISCORD_TOKEN) {
+    client.login(process.env.DISCORD_TOKEN).catch(err => {
+        console.error("Gagal login Discord: Token salah atau ditolak!");
+    });
+} else {
+    console.error("Variabel DISCORD_TOKEN tidak ditemukan di Railway!");
+}
+
+app.listen(PORT, () => {
+    console.log(`✅ Nexa Web aktif di https://nexa-bot-production.up.railway.app`);
+});
+
