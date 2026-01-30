@@ -1,3 +1,4 @@
+const PORT = process.env.PORT || 3000; 
 const { Client, GatewayIntentBits } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const play = require('play-dl');
@@ -7,8 +8,6 @@ const DiscordStrategy = require('passport-discord').Strategy;
 const session = require('express-session');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 // --- BOT SETUP ---
 const client = new Client({
     intents: [
@@ -121,4 +120,5 @@ if (process.env.DISCORD_TOKEN) {
 app.listen(PORT, () => {
     console.log(`✅ Nexa Web aktif di https://nexa-bot-production.up.railway.app`);
 });
+
 
