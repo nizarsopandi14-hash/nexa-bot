@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nexa Dashboard</title>
+    <style>
+        body { background: #0a0a0f; color: white; font-family: sans-serif; padding: 40px; }
+        .header { background: url('/banner.jpg') center/cover; height: 200px; border-radius: 20px; position: relative; }
+        .user-info { position: absolute; bottom: -30px; left: 40px; display: flex; align-items: center; }
+        .user-info img { width: 100px; height: 100px; border-radius: 50%; border: 5px solid #0a0a0f; }
+        .content { margin-top: 60px; background: #16213e; padding: 20px; border-radius: 15px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="user-info">
+            <img src="<%= user.avatar ? 'https://cdn.discordapp.com/avatars/'+user.id+'/'+user.avatar+'.png' : '/logo.png' %>">
+            <h1 style="margin-left: 20px;"><%= user.username || user.email %></h1>
+        </div>
+    </div>
+    <div class="content">
+        <h3>Nexa Control Panel</h3>
+        <p>Status: Active</p>
+        <a href="/logout" style="color: #ff4757;">Sign Out</a>
+    </div>
+</body>
+</html>
