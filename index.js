@@ -26,6 +26,29 @@ app.use(passport.session());
 // Di produksi, gunakan MongoDB atau PostgreSQL
 const users = []; 
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+// Inisialisasi Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+// Contoh fungsi chat di bot Discord
+client.on("messageCreate", async (message) => {
+    if (message.author.bot) return;
+
+    if (message.content.startsWith("!ask")) {
+        const prompt = message.content.replace("!ask ", "");
+        try {
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            message.reply(response.text());
+        } catch (error) {
+            console.error("Gemini Error:", error);
+            message.reply("Aduh, otak AI-ku lagi konslet nih.");
+        }
+    }
+});
+
 // --- 3. PASSPORT SERIALIZATION ---
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -116,3 +139,4 @@ if (token) {
 app.listen(port, '0.0.0.0', () => {
     console.log(`🚀 Server berjalan di port ${port}`);
 });
+
